@@ -7,8 +7,8 @@
 char intToChar(int v);
 
 struct clausula {
-    int val[3];  //1 2 3
-    int valorLogico[3]; // 
+    int *val;
+    int *valorLogico; // 
 };  
 
 struct formula {
@@ -30,10 +30,48 @@ Formula* criaFormula(int n, int m) {
     formula->n = n;
     formula->m = m;
 
+    for(int i = 0; i < m; i++){
+
+        formula->clausulas[i].val = calloc((size_t)n, sizeof *formula->clausulas[i].val);
+        formula->clausulas[i].valorLogico = calloc((size_t)n, sizeof *formula->clausulas[i].valorLogico);
+        //formula->clausulas[i].val = malloc(n * sizeof(int));
+        //formula->clausulas[i].valorLogico = malloc(n * sizeof(int));
+
+    }
+
+    /*for(int i = 0; i < m; i++){
+
+        for(int j = 0; j < n; j++){
+
+            printf("Clausula %d, %d %d\n", i, formula->clausulas[j].val[n], formula->clausulas[j].valorLogico[n]);
+
+        }
+
+
+    }*/
+
+
+
+
     return formula;
 }
 
 void destroiFormula(Formula* f) {
+    
+    for(int i = 0; i < f->m; i++){
+        if (f->clausulas[i].val) {
+            free(f->clausulas[i].val);
+            f->clausulas[i].val = NULL;
+        }
+        if (f->clausulas[i].valorLogico) {
+            free(f->clausulas[i].valorLogico);
+            f->clausulas[i].valorLogico = NULL;
+        }
+
+
+    }
+
+
     if (f->clausulas) {
         free(f->clausulas);
         f->clausulas = NULL;
@@ -48,17 +86,17 @@ void adicionaClausula(Formula *f, int r, int *vetAdd) {
         return;
 
     // n variaveis  (n v n+1 v n+2 ... v nx)
+    for(int j = 0; j < f->n; j++){
 
-
-    for(int i = 0; i < f->n; i++){
-        f->clausulas[r].val[i] = vetAdd[i];
-
+        f->clausulas[r].val[j] = vetAdd[j];
+    
 
     }
 
-
     for(int i = 0; i < f->n; i++){
 
+
+        //printf("%d", f->clausulas[r].val[i]);
         if(f->clausulas[r].val[i] < 0){
 
             f->clausulas[r].valorLogico[i] = 0;
@@ -70,6 +108,8 @@ void adicionaClausula(Formula *f, int r, int *vetAdd) {
 
 
         }
+
+        //printf("%d", f->clausulas[r].valorLogico[i]);
 
     }
 
@@ -129,26 +169,25 @@ int solucaoFormula(Formula *f, int n, int *vet){
 }
 
 int verificaCada(Formula *f, int n, int *vet){
-    if(f->m == n){
+    if((f->m -1) == n){
 
-        return verificaClausula(f->clausulas[n], f, vet);
+        return verificaClausula(f, vet, n);
 
 
     }
 
-
-    int saida = verificaCada(f, n + 1, vet);
+    int saida = verificaCada(f, n +1, vet);
 
     if(saida == 0){
         return 0;
     }else{
-        return verificaClausula(f->clausulas[n], f, vet);
+        return verificaClausula(f, vet, n);
     }
 
 
 }
 
-int verificaClausula(Clausula c, Formula *f, int *vet) {
+int verificaClausula(Formula *f, int *vet, int n) {
     
     int *vetClone = malloc(f->n * sizeof(int));
 
@@ -157,7 +196,7 @@ int verificaClausula(Clausula c, Formula *f, int *vet) {
 
         vetClone[i] = vet[i];
 
-        if(c.valorLogico[i] == 0){
+        if(f->clausulas[n].valorLogico[i] == 0){
             vetClone[i] = !vetClone[i];
         }
 
@@ -186,4 +225,28 @@ void proxVeri(Formula *f, int *vet){
 
 
         }
+}
+
+
+void limpaAdd(int *vet, int n){
+
+    for(int i = 0; i < n; i++){
+        vet[i] = 0;
+    }
+
+}
+
+void imprimirClausulas(Formula *formula){
+
+
+    for(int i = 0; i < formula->m; i++){
+
+        for(int j = 0; j < formula->n; j++){
+
+            printf("Clausula %d, %d %d\n", i, formula->clausulas[i].val[j], formula->clausulas[i].valorLogico[j]);
+
+        }
+
+
+    }
 }
