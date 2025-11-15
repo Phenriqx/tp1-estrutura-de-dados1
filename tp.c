@@ -20,7 +20,7 @@ int main() {
     adicionaClausula(formula);
 
     if (solucaoFormula(formula, 0, vet, vetAux)) {
-        printf("\nFórmula:");
+        printf("Fórmula:");
         imprimeFormula(formula);
 
         printf("Solução encontrada:\n");

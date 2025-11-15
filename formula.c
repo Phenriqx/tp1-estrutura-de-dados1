@@ -144,14 +144,6 @@ void limpaAdd(int *vet, int n){
         vet[i] = 0;
 }
 
-void imprimirClausulas(Formula *formula){
-    for(int i = 0; i < formula->m; i++) {
-        for(int j = 0; j < formula->n; j++) {
-            printf("Clausula %d %d %d\n", i, formula->clausulas[i].val[j], formula->clausulas[i].valorLogico[j]);
-        }
-    }
-}
-
 char intToChar(int v) {
     return v + 'a' - 1;
 }     
